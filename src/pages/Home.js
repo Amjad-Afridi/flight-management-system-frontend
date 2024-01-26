@@ -5,22 +5,46 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { MdNavigateNext } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
+import { useNavigate } from "react-router-dom";
 const Home = () => {
-  const { token, flightData } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const { token } = useSelector((state) => state.user);
   const [data, setData] = useState(null);
   const [nextPage, setNextPage] = useState(null);
   const [previousPage, setPreviousPage] = useState(null);
   const [classType, setClassType] = useState(null);
   const [flightName, setFlightName] = useState(null);
-  const fetchData = async (pageNumber, limit) => {
-    const response = await axios.get(
-      `http://localhost:3001/flight?page=${pageNumber}&limit=${limit}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+  const [stop, setStop] = useState(null);
+  const inputStyles =
+    "rounded-md p-3 text-lg outline-none border border-b-[2px] border-0";
+  const paginationStyles =
+    "bg-white text-blue-950 p-2 rounded-md flex items-center gap-1";
+  const fetchData = async (pageNumber = 1, limit = 8) => {
+    var url;
+    if (classType && stop && flightName) {
+      console.log("all searched");
+      url = `http://localhost:3001/flight?page=${pageNumber}&limit=${limit}&class=${classType}&stop=${stop}&planeType=${flightName}`;
+    } else if (classType && flightName) {
+      url = `http://localhost:3001/flight?page=${pageNumber}&limit=${limit}&class=${classType}&planeType=${flightName}`;
+    } else if (stop && flightName) {
+      url = `http://localhost:3001/flight?page=${pageNumber}&limit=${limit}&stop=${stop}&planeType=${flightName}`;
+    } else if (classType && stop) {
+      url = `http://localhost:3001/flight?page=${pageNumber}&limit=${limit}&class=${classType}&stop=${stop}`;
+    } else if (classType) {
+      console.log("classType executed!");
+      url = `http://localhost:3001/flight?page=${pageNumber}&limit=${limit}&class=${classType}`;
+    } else if (stop) {
+      url = `http://localhost:3001/flight?page=${pageNumber}&limit=${limit}&stop=${stop}`;
+    } else if (flightName) {
+      url = `http://localhost:3001/flight?page=${pageNumber}&limit=${limit}&planeType=${flightName}`;
+    } else {
+      url = `http://localhost:3001/flight?page=${pageNumber}&limit=${limit}`;
+    }
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
     setData(response.data.data);
     if (response.data.next) {
       setNextPage(response.data.next);
@@ -53,10 +77,27 @@ const Home = () => {
   const handleFlightName = (e) => {
     setFlightName(e.target.value);
   };
-
+  const handleStops = (e) => {
+    setStop(e.target.value);
+  };
+  const reset = (e) => {
+    fetchData(1, 8);
+  };
+  const handleBooking = (flight) => {
+    navigate("/book-flight", { state: { data: flight } });
+  };
+  const submitForm = (e) => {
+    e.preventDefault();
+    if (!stop && !flightName && !classType) return;
+    const pageNumber = 1;
+    const limit = 8;
+    fetchData(pageNumber, limit);
+    setStop("");
+    setFlightName("");
+    setClassType("");
+  };
   useEffect(() => {
-    fetchData(1, 6);
-    console.log("flightData: ", flightData);
+    fetchData(1, 8);
   }, [token]);
 
   return (
@@ -64,19 +105,37 @@ const Home = () => {
       {data ? (
         <div className="bg-blue-950 w-full h-[100vh] p-0 pt-16">
           <div className="overflow-x-auto w-[60%] m-auto mt-8">
-            <form>
-              <input
-                type="text"
-                value={classType}
-                onChange={handleClassType}
-                placeholder="Search flight by class"
-              />
-              <input
-                type="text"
-                value={flightName}
-                onChange={handleClassType}
-                placeholder="Search flight by name"
-              />
+            <form
+              className="flex my-4 justify-between bg-white p-2 rounded-lg"
+              onSubmit={submitForm}
+            >
+              <div className="flex gap-4 ">
+                <input
+                  type="text"
+                  value={classType}
+                  className={inputStyles}
+                  onChange={handleClassType}
+                  placeholder="Search flight by classs"
+                />
+                <input
+                  type="text"
+                  value={flightName}
+                  className={inputStyles}
+                  onChange={handleFlightName}
+                  placeholder="Search flight by name"
+                />
+                <input
+                  type="text"
+                  value={stop}
+                  className={inputStyles}
+                  onChange={handleStops}
+                  placeholder="Search flight by stops"
+                />
+              </div>
+
+              <button className="flex items-center bg-blue-950 px-6 rounded-md text-lg text-white">
+                Search
+              </button>
             </form>
             <Table hoverable className="w-full">
               <Table.Head className="text-lg border-b-[2px] border-black ">
@@ -88,7 +147,7 @@ const Home = () => {
                   <span className="sr-only">Book Now</span>
                 </Table.HeadCell>
               </Table.Head>
-              <Table.Body className="divide-y mt-4">
+              <Table.Body>
                 {data.map((flight) => {
                   return (
                     <>
@@ -102,40 +161,45 @@ const Home = () => {
                         </Table.Cell>
                         <Table.Cell>{flight.vacantSeats.length}</Table.Cell>
                         <Table.Cell>
-                          <a
-                            href="#"
+                          <button
+                            onClick={() => handleBooking(flight)}
                             className="font-medium text-blue-950 hover:underline dark:text-cyan-500"
                           >
                             book now!
-                          </a>
+                          </button>
                         </Table.Cell>
                       </Table.Row>
                     </>
                   );
                 })}
               </Table.Body>
-
-              <div className="flex items-center justify-center mx-auto gap-16 w-full text-lg text-white my-4">
-                {previousPage && (
-                  <button
-                    onClick={handlePrev}
-                    className="flex items-center gap-1"
-                  >
-                    Prev
-                    <GrFormPrevious /> {previousPage.previousPage}{" "}
-                  </button>
-                )}
-                {nextPage && (
-                  <button
-                    onClick={handleNext}
-                    className="flex items-center gap-1 "
-                  >
-                    {" "}
-                    Next
-                    <MdNavigateNext /> {nextPage.nextPage}{" "}
-                  </button>
-                )}
+              <div className="flex">
+                <div className="flex items-center gap-4 w-full text-lg text-white my-4">
+                  {previousPage && (
+                    <button onClick={handlePrev} className={paginationStyles}>
+                      Prev
+                      <GrFormPrevious /> {previousPage.previousPage}{" "}
+                    </button>
+                  )}
+                  {nextPage && (
+                    <button onClick={handleNext} className={paginationStyles}>
+                      {" "}
+                      Next
+                      <MdNavigateNext /> {nextPage.nextPage}{" "}
+                    </button>
+                  )}
+                </div>
               </div>
+
+              {data.length !== 8 && (
+                <button
+                  onClick={reset}
+                  className="flex items-center bg-white px-5 py-2 rounded-md text-lg text-blue-950"
+                >
+                  {" "}
+                  Reset{" "}
+                </button>
+              )}
             </Table>
           </div>
         </div>
