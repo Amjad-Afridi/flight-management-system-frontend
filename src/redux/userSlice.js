@@ -4,18 +4,12 @@ const userSlice = createSlice({
   name: "user",
   initialState: {
     token: null,
+    user: null,
   },
   reducers: {
     login: (state, action) => {
-      state.token = action.payload;
-    },
-    setFlightData: (state, action) => {
-      state.flightdata = action.payload.data;
-      if (action.payload.nextPage) {
-        state.nextPage = action.payload.nextPage;
-      }
-      state.previousPage = action.payload.previousPage;
-      console.log("action payload : ", action.payload);
+      state.token = action.payload.token;
+      state.user = action.payload.user;
     },
   },
   extraReducer: {},

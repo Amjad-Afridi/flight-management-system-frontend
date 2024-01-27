@@ -1,20 +1,26 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 const BookFlight = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { data } = location.state;
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
   const [selectedSeats, setSelectedSeats] = useState(new Set());
   const pStyle = "flex-1 text-center";
   console.log("data: ", data);
 
   const selectSeat = (seatNumber) => {
     const newSet = new Set(selectedSeats);
-    newSet.add(seatNumber);
+    if (newSet.has(seatNumber)) {
+      newSet.delete(seatNumber);
+    } else {
+      newSet.add(seatNumber);
+    }
     setSelectedSeats(newSet);
   };
+  let seats;
   const bookSeats = () => {
-    const seats = Array.from(selectedSeats);
+    seats = Array.from(selectedSeats) || [];
     const updatedVacantSeats = data.vacantSeats.filter(
       (item) => !seats.includes(item),
     );
@@ -74,7 +80,11 @@ const BookFlight = () => {
                   <>
                     <button
                       onClick={() => selectSeat(seat)}
-                      className="py-3 px-5 text-white bg-gray-600 rounded-md hover:bg-green-500 "
+                      className={`py-3 px-5 text-white ${
+                        selectedSeats.has(seat)
+                          ? "bg-green-600 hover:bg-gray-600"
+                          : "bg-gray-600 hover:bg-green-600"
+                      } rounded-md`}
                     >
                       {seat}
                     </button>
