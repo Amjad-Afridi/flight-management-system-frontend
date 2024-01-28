@@ -25,17 +25,15 @@ const Register = () => {
         email: email,
         password: password,
       });
-      if (response.status === 200) {
-        setError(null);
-        setEmail("");
-        setPassword("");
-        setUsername("");
-        alert("user registered successfully");
-        navigate("/user/login");
-      }
+
+      setError(null);
+      setEmail("");
+      setPassword("");
+      setUsername("");
+      alert("user registered successfully");
+      navigate("/user/login");
     } catch (e) {
-      setError(e.message);
-      console.log(e);
+      setError(e.response.data);
     }
   };
   const gotoLogin = () => {
@@ -51,7 +49,7 @@ const Register = () => {
           onSubmit={submitForm}
           className="flex flex-col gap-3 text-2xl bg-white p-8 rounded-lg"
         >
-          <lable> Username </lable>
+          <label> Username </label>
           <input
             type="text"
             placeholder="Enter Username"
@@ -60,7 +58,7 @@ const Register = () => {
             className={inputStyle}
             onChange={handleUsername}
           />
-          <lable> Email </lable>
+          <label> Email </label>
           <input
             type="email"
             placeholder="Enter Email"
@@ -69,7 +67,7 @@ const Register = () => {
             className={inputStyle}
             onChange={handleEmailChange}
           />
-          <lable> Password </lable>
+          <label> Password </label>
           <input
             type="text"
             placeholder="Enter Password"

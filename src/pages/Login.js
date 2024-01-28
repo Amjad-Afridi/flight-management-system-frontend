@@ -19,27 +19,18 @@ const Login = () => {
   };
   const submitForm = async (e) => {
     e.preventDefault();
-
-    console.log("email is", email);
-    console.log("password is", password);
-
     try {
       const response = await axios.post(`http://localhost:3001/user/login`, {
         email: email,
         password: password,
       });
-      if (response.status === 200) {
-        setError(null);
-        setEmail("");
-        setPassword("");
-        dispatch(login(response.data));
-        navigate("/");
-      }
-      if (response.status === 400) {
-        setError("invalid email or password");
-      }
+      setError(null);
+      setEmail("");
+      setPassword("");
+      dispatch(login(response.data));
+      navigate("/");
     } catch (e) {
-      setError(e.message);
+      setError(e.response.data);
       console.log(e);
     }
   };
@@ -56,7 +47,7 @@ const Login = () => {
           onSubmit={submitForm}
           className="flex flex-col gap-3 text-2xl bg-white p-8 rounded-lg"
         >
-          <lable> Email </lable>
+          <label> Email </label>
           <input
             type="email"
             placeholder="Enter Email"
@@ -65,7 +56,7 @@ const Login = () => {
             className={inputStyle}
             onChange={handleEmailChange}
           />
-          <lable> Password </lable>
+          <label> Password </label>
           <input
             type="text"
             placeholder="Enter Password"

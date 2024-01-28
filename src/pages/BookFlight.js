@@ -1,11 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import axios from "axios";
 const BookFlight = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { data } = location.state;
-  const [isButtonClicked, setIsButtonClicked] = useState(false);
   const [selectedSeats, setSelectedSeats] = useState(new Set());
+  const [error, setError] = useState(null);
   const pStyle = "flex-1 text-center";
   console.log("data: ", data);
 
@@ -18,15 +19,27 @@ const BookFlight = () => {
     }
     setSelectedSeats(newSet);
   };
-  let seats;
-  const bookSeats = () => {
-    seats = Array.from(selectedSeats) || [];
+  const bookSeats = async () => {
+    const seats = Array.from(selectedSeats) || [];
     const updatedVacantSeats = data.vacantSeats.filter(
-      (item) => !seats.includes(item),
+      (item) => !seats.includes(item)
     );
     data.vacantSeats = [...updatedVacantSeats];
     data.bookedSeats = [...data.bookedSeats, ...seats];
     setSelectedSeats(new Set());
+    try {
+      const response = axios.patch(
+        `http://localhost:3001/flight/book-seat/${data._id}`,
+        {
+          vacantSeats: data.vacantSeats,
+          bookedSeats: data.bookedSeats,
+        }
+      );
+      setError(null);
+    } catch (e) {
+      console.log(e.message);
+      setError(e.response.data);
+    }
   };
   const backToHome = (data) => {
     navigate("/");
@@ -108,6 +121,7 @@ const BookFlight = () => {
             </button>
           </div>
         </div>
+        {error && <p>{error}</p>}
       </div>
     </>
   );
