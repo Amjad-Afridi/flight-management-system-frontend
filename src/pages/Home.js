@@ -1,14 +1,16 @@
-"use client";
-import { Table } from "flowbite-react";
 import { AiOutlineLogout } from "react-icons/ai";
+import { IoSearch } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { MdNavigateNext } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
+import { HiOutlineSwitchVertical } from "react-icons/hi";
 import { Outlet, useNavigate } from "react-router-dom";
 import { logout } from "../redux/userSlice";
 import AddFlight from "./AddFlight";
+import DataTable from "../components/Table";
+import GridView from "../components/GridView";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -22,6 +24,7 @@ const Home = () => {
   const [stop, setStop] = useState(null);
   const [resetResults, setResetResults] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showTable, setShowTable] = useState(true);
   const inputStyles =
     "rounded-md p-3 text-md outline-none border border-b-[1px] border-0";
   const paginationStyles =
@@ -66,6 +69,9 @@ const Home = () => {
     console.log("response data: ", response.data);
   };
 
+  const switchView = () => {
+    setShowTable(!showTable);
+  };
   const handlePrev = () => {
     const pageNumber = previousPage.previousPage;
     const limit = previousPage.limit;
@@ -97,9 +103,7 @@ const Home = () => {
     dispatch(logout());
     navigate("/user/login");
   };
-  const handleBooking = (flight) => {
-    navigate("/book-flight", { state: { data: flight } });
-  };
+
   const submitForm = (e) => {
     e.preventDefault();
     if (!stop && !flightName && !classType) return;
@@ -133,6 +137,12 @@ const Home = () => {
             </button>
           </header>
           <div className="overflow-x-auto w-[80%] m-auto mt-8">
+            <button
+              onClick={switchView}
+              className="flex items-center gap-2 bg-white py-2 px-4 text-blue-950 rounded-md"
+            >
+              Switch View <HiOutlineSwitchVertical size={20} />
+            </button>
             <form
               className="flex my-4 justify-between bg-white p-4 rounded-lg"
               onSubmit={submitForm}
@@ -161,52 +171,21 @@ const Home = () => {
                 />
               </div>
 
-              <button className="flex items-center bg-blue-950 px-6 rounded-md text-lg text-white">
-                Search
+              <button className="flex items-center gap-2 bg-blue-950 px-6 rounded-md text-lg text-white">
+                Search <IoSearch />
               </button>
             </form>
-
-            <Table hoverable className="w-full">
-              <Table.Head className="text-lg border-b-[2px] border-black ">
-                <Table.HeadCell>Flight name</Table.HeadCell>
-                <Table.HeadCell>Class Type</Table.HeadCell>
-                <Table.HeadCell>Stops</Table.HeadCell>
-                <Table.HeadCell>Vacant Seats</Table.HeadCell>
-                <Table.HeadCell>
-                  <span className="sr-only">Book Now</span>
-                </Table.HeadCell>
-              </Table.Head>
-              {data ? (
-                <Table.Body>
-                  {data.map((flight) => {
-                    return (
-                      <>
-                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                          <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                            {flight.planeType}
-                          </Table.Cell>
-                          <Table.Cell>{flight.class}</Table.Cell>
-                          <Table.Cell>
-                            {flight.stops.map((stop) => stop + ", ")}
-                          </Table.Cell>
-                          <Table.Cell>{flight.vacantSeats.length}</Table.Cell>
-                          <Table.Cell>
-                            <button
-                              onClick={() => handleBooking(flight)}
-                              className="font-medium text-blue-950 hover:underline dark:text-cyan-500"
-                            >
-                              book now!
-                            </button>
-                          </Table.Cell>
-                        </Table.Row>
-                      </>
-                    );
-                  })}
-                </Table.Body>
+            {data ? (
+              showTable ? (
+                <DataTable data={data} />
               ) : (
-                <p className="text-blue-950 text-lg text-center">loading</p>
-              )}
-            </Table>
+                <GridView data={data} />
+              )
+            ) : (
+              <p className="w-fit text-blue-950 text-lg mt-4 bg-white p-4 rounded-md">
+                loading
+              </p>
+            )}
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4 w-full text-lg text-white my-4">
                 {previousPage && (
@@ -228,21 +207,29 @@ const Home = () => {
                   setShowModal(true);
                   navigate("/add-flight");
                 }}
-                className="px-4 py-2 rounded-md text-white bg-blue-950 whitespace-nowrap "
+                className="px-4 py-2 rounded-md text-blue-950 bg-white my-4 whitespace-nowrap"
               >
                 Add Flight
               </button>
               {showModal && <AddFlight />}
-            </div>
-            {resetResults && (
               <button
-                onClick={reset}
-                className="flex items-center bg-white px-5 py-2 rounded-md text-lg text-blue-950"
+                onClick={() => {
+                  navigate("/user-bookings");
+                }}
+                className="px-4 py-2 ml-4 rounded-md text-blue-950 bg-white my-4 whitespace-nowrap "
               >
-                {" "}
-                Reset{" "}
+                Get User Bookings
               </button>
-            )}
+              {resetResults && (
+                <button
+                  onClick={reset}
+                  className="flex items-center bg-white px-5 ml-4 py-2 rounded-md text-lg text-blue-950"
+                >
+                  {" "}
+                  Reset{" "}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       }

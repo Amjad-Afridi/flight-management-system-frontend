@@ -1,10 +1,13 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useSelector } from "react-redux";
 const BookFlight = () => {
+  const { user } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const location = useLocation();
   const { data } = location.state;
+  console.log("data: ", data);
   const [selectedSeats, setSelectedSeats] = useState(new Set());
   const [error, setError] = useState(null);
   const pStyle = "flex-1 text-center";
@@ -22,7 +25,7 @@ const BookFlight = () => {
   const bookSeats = async () => {
     const seats = Array.from(selectedSeats) || [];
     const updatedVacantSeats = data.vacantSeats.filter(
-      (item) => !seats.includes(item)
+      (item) => !seats.includes(item),
     );
     data.vacantSeats = [...updatedVacantSeats];
     data.bookedSeats = [...data.bookedSeats, ...seats];
@@ -33,13 +36,24 @@ const BookFlight = () => {
         {
           vacantSeats: data.vacantSeats,
           bookedSeats: data.bookedSeats,
-        }
+        },
       );
       setError(null);
     } catch (e) {
       console.log(e.message);
       setError(e.response.data);
     }
+    try {
+      const response = axios.post("http://localhost:3001/user-booking", {
+        data: data,
+        userBookedSeats: seats,
+        user: user,
+      });
+      console.log("user booking details are: ", response);
+    } catch (e) {
+      console.log(e.message);
+    }
+    alert("Booking done successfully");
   };
   const backToHome = (data) => {
     navigate("/");

@@ -20,9 +20,8 @@ function AddFlight() {
 
   function onCloseModal() {
     setOpenModal(false);
-    navigate(-1);
+    navigate("/");
   }
-
   const handleFlightName = (e) => {
     setFlightName(e.target.value);
   };
@@ -69,7 +68,7 @@ function AddFlight() {
       setFlightNumber("");
       setVacantSeats("");
       setError(null);
-      navigate(-1);
+      alert("Flight Added Successfully");
     } catch (err) {
       setError(err.response.data);
     }
@@ -162,7 +161,7 @@ function AddFlight() {
                 <TextInput
                   id="bookedSeats"
                   placeholder="Booked Seats list separated by commas"
-                  className={bookedSeats}
+                  className={inputStyles}
                   onChange={handleBookedSeats}
                   required
                 />
@@ -171,7 +170,7 @@ function AddFlight() {
                 Add Flight
               </button>
 
-              {error && <p className="mt-4 text-blue-950 text-md">{error}</p>}
+              {error && <p className="mt-4 text-red-500 text-md">{error}</p>}
             </form>
           </div>
         </Modal.Body>

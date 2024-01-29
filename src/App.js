@@ -5,6 +5,7 @@ import AddFlight from "./pages/AddFlight";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import BookFlight from "./pages/BookFlight";
+import UserBookings from "./pages/UserBookings";
 
 function App() {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ function App() {
         <Route path="/book-flight" element={<BookFlight />} />
         <Route path="/user/login" element={<Login />} />
         <Route path="/user/register" element={<Register />} />
+        <Route path="/user-bookings" element={<UserBookings />} />
       </Routes>
     </>
   );

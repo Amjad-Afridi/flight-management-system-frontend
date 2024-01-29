@@ -38,7 +38,7 @@ const Login = () => {
     navigate("/user/register");
   };
   return (
-    <div className="bg-blue-950 w-full h-[100vh] p-0 pt-32">
+    <div className="bg-blue-950 w-full h-[100vh]  p-0 pt-32">
       <div className="border-[2px] border-white w-fit min-w-[40%] mx-auto rounded-lg">
         <h1 className="flex justify-center bg-blue-950 my-8 p-4 text-white text-4xl rounded-md ">
           User Login Form
