@@ -5,7 +5,12 @@ module.exports = {
     "node_modules/flowbite-react/lib/esm/**/*.js",
   ],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: (theme) => ({
+        "background-image":
+          "url('https://wallpapers.com/images/high/747-airplane-3fj378yn99dm3zns.webp')",
+      }),
+    },
   },
   plugins: [require("flowbite/plugin")],
 };

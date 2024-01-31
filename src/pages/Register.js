@@ -6,7 +6,7 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const inputStyle = "p-4 mb-8 outline-none border-[1px] text-lg rounded-md";
+  const inputStyle = "p-4 mb-4 outline-none border-[1px] text-lg rounded-md";
   const navigate = useNavigate();
   const handleUsername = (e) => {
     setUsername(e.target.value);
@@ -40,9 +40,9 @@ const Register = () => {
     navigate("/user/login");
   };
   return (
-    <div className="bg-blue-950 w-full h-[100vh] p-0 pt-32">
-      <div className="border-[2px] border-white w-fit min-w-[40%] mx-auto rounded-lg">
-        <h1 className="flex justify-center bg-blue-950 my-8 p-4 text-white text-4xl rounded-md ">
+    <div className="bg-background-image bg-cover bg-center w-full h-[100vh] p-0 pt-16">
+      <div className="border-[2px] border-white w-[30%] mx-auto rounded-lg">
+        <h1 className="flex justify-center bg-blue-950 py-12 text-white text-4xl rounded-md ">
           User Registration Form
         </h1>
         <form
@@ -69,7 +69,7 @@ const Register = () => {
           />
           <label> Password </label>
           <input
-            type="text"
+            type="password"
             placeholder="Enter Password"
             required
             value={password}
@@ -77,16 +77,16 @@ const Register = () => {
             onChange={handlePasswordChange}
           />
           <div className="flex gap-2">
-            <button className="bg-blue-950 text-white min-w-[65%] p-4 my-4 rounded-md">
+            <button className="bg-blue-950 text-white w-full p-4 my-4 rounded-md">
               {" "}
               Register
             </button>
-            <button
-              onClick={gotoLogin}
-              className="bg-blue-500 text-white w-full p-4 my-4 rounded-md"
-            >
-              login instead!{" "}
-            </button>
+          </div>
+          <div className="my-4">
+            Already registered ?{" "}
+            <span onClick={gotoLogin} className="text-blue-500 cursor-pointer">
+              login now!
+            </span>
           </div>
           {error && <p className="text-red-500">{error}</p>}
         </form>

@@ -2,16 +2,15 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { GiConfirmed } from "react-icons/gi";
 const BookFlight = () => {
   const { user } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const location = useLocation();
   const { data } = location.state;
-  console.log("data: ", data);
   const [selectedSeats, setSelectedSeats] = useState(new Set());
   const [error, setError] = useState(null);
   const pStyle = "flex-1 text-center";
-  console.log("data: ", data);
 
   const selectSeat = (seatNumber) => {
     const newSet = new Set(selectedSeats);
@@ -49,9 +48,9 @@ const BookFlight = () => {
         userBookedSeats: seats,
         user: user,
       });
-      console.log("user booking details are: ", response);
     } catch (e) {
-      console.log(e.message);
+      return console.log(e.message);
+      setError(e.response.data);
     }
     alert("Booking done successfully");
   };
@@ -61,11 +60,8 @@ const BookFlight = () => {
 
   return (
     <>
-      <div className="bg-blue-950 w-full h-[100vh] p-0 pt-16">
-        <div
-          className="overflow-x-auto w-[70%] m-auto px-16 mt-8 bg-white py-8 border-2
-         border-blue-950 rounded-lg"
-        >
+      <div className="bg-background-image bg-cover bg-center w-full h-[100vh] p-0 pt-16">
+        <div className="overflow-x-auto w-[70%] m-auto px-16 mt-8 bg-white py-8  rounded-lg">
           <h1 className="text-blue-950 text-4xl text-center mb-8">
             Flight Booking Details{" "}
           </h1>
@@ -82,7 +78,15 @@ const BookFlight = () => {
             <p className={pStyle}>{data.planeType}</p>
             <p className={pStyle}>{data.airplaneNumber}</p>
             <p className={pStyle}>{data.class}</p>
-            <p className={pStyle}>{data.stops.map((stop) => stop + " / ")}</p>
+            <p className={pStyle}>
+              {data.stops.map((stop, index) => {
+                if (index === data.stops.length - 1) {
+                  return stop;
+                } else {
+                  return stop + " -> ";
+                }
+              })}
+            </p>
           </div>
 
           <div className="flex flex-col gap-8 py-8 mx-auto w-full">
@@ -123,15 +127,15 @@ const BookFlight = () => {
           <div className="flex items-center justify-between">
             <button
               onClick={bookSeats}
-              className="bg-blue-950 mt-4 px-5 py-3 rounded-md text-white text-lg"
+              className="flex items-center gap-2 bg-blue-950 mt-4 px-5 py-3 rounded-md text-white text-lg"
             >
-              Confirm Booking
+              Book <GiConfirmed />
             </button>
             <button
               onClick={backToHome}
               className="bg-blue-950 mt-4 px-5 py-3 rounded-md text-white text-lg"
             >
-              Back to homepage
+              Back to home
             </button>
           </div>
         </div>

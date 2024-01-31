@@ -15,7 +15,6 @@ function App() {
 
   return (
     <>
-      {/*<Register />*/}
       <Routes>
         <Route path="/" element={<Home />}>
           <Route path="add-flight" element={<AddFlight />} />
@@ -28,5 +27,4 @@ function App() {
     </>
   );
 }
-
 export default App;

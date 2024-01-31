@@ -1,6 +1,7 @@
 "use client";
 import { Table } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
+
 const DataTable = ({ data }) => {
   const navigate = useNavigate();
   const handleBooking = (flight) => {
@@ -23,21 +24,28 @@ const DataTable = ({ data }) => {
             return (
               <>
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                    {flight.planeType}
-                  </Table.Cell>
+                  <Table.Cell>{flight.planeType}</Table.Cell>
                   <Table.Cell>{flight.class}</Table.Cell>
                   <Table.Cell>
-                    {flight.stops.map((stop) => stop + ", ")}
+                    {flight.stops.map((stop, index) => {
+                      if (index === flight.stops.length - 1) return stop;
+                      else return stop + " -> ";
+                    })}
                   </Table.Cell>
                   <Table.Cell>{flight.vacantSeats.length}</Table.Cell>
                   <Table.Cell>
-                    <button
-                      onClick={() => handleBooking(flight)}
-                      className="font-medium text-blue-950 hover:underline dark:text-cyan-500"
-                    >
-                      book now!
-                    </button>
+                    {flight.vacantSeats.length !== 0 ? (
+                      <button
+                        onClick={() => handleBooking(flight)}
+                        className="font-medium text-blue-950 hover:underline dark:text-cyan-500"
+                      >
+                        book now!
+                      </button>
+                    ) : (
+                      <button className="font-medium text-blue-950 hover:underline dark:text-cyan-500">
+                        seats are full!
+                      </button>
+                    )}
                   </Table.Cell>
                 </Table.Row>
               </>

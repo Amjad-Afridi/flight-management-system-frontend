@@ -8,7 +8,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const inputStyle = "p-4 mb-8 text-lg border-b-[1px] rounded-md";
+  const inputStyle = "p-4 mb-4 text-lg border-b-[1px] rounded-md";
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleEmailChange = (e) => {
@@ -38,9 +38,9 @@ const Login = () => {
     navigate("/user/register");
   };
   return (
-    <div className="bg-blue-950 w-full h-[100vh]  p-0 pt-32">
-      <div className="border-[2px] border-white w-fit min-w-[40%] mx-auto rounded-lg">
-        <h1 className="flex justify-center bg-blue-950 my-8 p-4 text-white text-4xl rounded-md ">
+    <div className="bg-background-image bg-cover bg-center w-full h-[100vh]  p-0 pt-24">
+      <div className="border-[2px] border-white w-fit min-w-[30%] mx-auto rounded-lg">
+        <h1 className="flex justify-center bg-blue-950 py-12 text-white text-4xl rounded-md ">
           User Login Form
         </h1>
         <form
@@ -58,7 +58,7 @@ const Login = () => {
           />
           <label> Password </label>
           <input
-            type="text"
+            type="password"
             placeholder="Enter Password"
             value={password}
             required
@@ -66,16 +66,19 @@ const Login = () => {
             onChange={handlePasswordChange}
           />
           <div className="flex gap-2">
-            <button className="bg-blue-950 text-white min-w-[65%] p-4 my-4 rounded-md">
+            <button className="bg-blue-950 text-white w-full p-4 my-4 rounded-md">
               {" "}
               Login
             </button>
-            <button
+          </div>
+          <div className="my-4">
+            Haven't registered Yet ?{" "}
+            <span
               onClick={gotoRegistration}
-              className="bg-blue-500 text-white p-4 my-4 w-full rounded-md"
+              className="text-blue-500 cursor-pointer"
             >
-              Register instead!{" "}
-            </button>
+              register now!
+            </span>
           </div>
 
           {error && <p className="text-red-500">{error}</p>}
